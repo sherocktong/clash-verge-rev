@@ -3,9 +3,9 @@
 //! A command-line tool to manage Clash Verge settings including
 //! TUN mode and system proxy configuration.
 
-use anyhow::{Context, Result};
+use anyhow::{Context as _, Result};
 use clap::{Parser, Subcommand};
-use colored::*;
+use colored::Colorize as _;
 use serde::{Deserialize, Serialize};
 use smartstring::alias::String as SmartString;
 use std::path::PathBuf;
@@ -86,7 +86,7 @@ struct ClashConfig {
 }
 
 impl ClashConfig {
-    fn get_controller(&self) -> String {
+    fn _get_controller(&self) -> String {
         self.external_controller
             .as_deref()
             .map(|s| {
@@ -195,7 +195,7 @@ impl ConfigManager {
     }
 
     /// Ensure the config directory exists
-    fn ensure_dir(&self) -> Result<()> {
+    fn _ensure_dir(&self) -> Result<()> {
         if let Some(parent) = self.config_path.parent() {
             std::fs::create_dir_all(parent)
                 .with_context(|| format!("Failed to create directory: {}", parent.display()))?;
@@ -227,8 +227,8 @@ impl ConfigManager {
     }
 
     /// Write configuration to file
-    fn write(&self, config: &VergeConfig) -> Result<()> {
-        self.ensure_dir()?;
+    fn _write(&self, config: &VergeConfig) -> Result<()> {
+        self._ensure_dir()?;
 
         let content = serde_yaml_ng::to_string(config)?;
         std::fs::write(&self.config_path, format!("# Clash Verge Config\n{}", content))
@@ -481,6 +481,7 @@ impl SingletonClient {
 
 /// Status response from the app
 #[derive(Debug, Deserialize)]
+#[allow(dead_code)]
 struct StatusResponse {
     ok: bool,
     enable_tun_mode: bool,
@@ -490,11 +491,13 @@ struct StatusResponse {
 }
 
 /// Mihomo API client (for reading runtime status only)
+#[allow(dead_code)]
 struct MihomoClient {
     base_url: String,
     secret: Option<String>,
 }
 
+#[allow(dead_code)]
 impl MihomoClient {
     fn new(controller: String, secret: Option<String>) -> Self {
         let base_url = format!("http://{}", controller);
@@ -504,11 +507,10 @@ impl MihomoClient {
     /// Get headers with authentication
     fn get_headers(&self) -> reqwest::header::HeaderMap {
         let mut headers = reqwest::header::HeaderMap::new();
-        if let Some(secret) = &self.secret {
-            headers.insert(
-                "Authorization",
-                format!("Bearer {}", secret).parse().unwrap(),
-            );
+        if let Some(secret) = &self.secret
+            && let Ok(val) = format!("Bearer {}", secret).parse()
+        {
+            headers.insert("Authorization", val);
         }
         headers
     }
@@ -536,13 +538,15 @@ impl MihomoClient {
 }
 
 /// System proxy manager
+#[allow(dead_code)]
 struct SysProxyManager {
     port: u16,
     host: String,
 }
 
+#[allow(dead_code)]
 impl SysProxyManager {
-    fn new(port: u16, host: String) -> Self {
+    const fn new(port: u16, host: String) -> Self {
         Self { port, host }
     }
 
@@ -554,7 +558,7 @@ impl SysProxyManager {
             enable: enabled && !pac_mode,
             host: self.host.clone(),
             port: self.port,
-            bypass: bypass.clone(),
+            bypass,
         };
 
         let auto_proxy = sysproxy::Autoproxy {
@@ -689,7 +693,7 @@ async fn main() -> Result<()> {
     let config_manager = ConfigManager::new(cli.portable, cli.config_dir)?;
 
     // Read config for settings
-    let mut config = config_manager.read()?;
+    let config = config_manager.read()?;
 
     // Read clash config for secret/controller
     let clash_config = config_manager.read_clash_config().unwrap_or_default();
