@@ -14,6 +14,7 @@ pub enum NotificationEvent<'a> {
     LightweightModeEntered,
     ProfilesReactivated,
     AppQuit,
+    ProxyConnectivityFailed,
     #[cfg(target_os = "macos")]
     AppHidden,
 }
@@ -71,6 +72,11 @@ pub async fn notify_event<'a>(event: NotificationEvent<'a>) {
         NotificationEvent::AppQuit => {
             let title = clash_verge_i18n::t!("notifications.appQuit.title");
             let body = clash_verge_i18n::t!("notifications.appQuit.body");
+            notify(title, body);
+        }
+        NotificationEvent::ProxyConnectivityFailed => {
+            let title = clash_verge_i18n::t!("notifications.proxyConnectivityFailed.title");
+            let body = clash_verge_i18n::t!("notifications.proxyConnectivityFailed.body");
             notify(title, body);
         }
         #[cfg(target_os = "macos")]

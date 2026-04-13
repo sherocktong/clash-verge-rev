@@ -23,6 +23,9 @@ notifications:
   appQuit:
     title: Чыгар алдыннан
     body: Clash Verge чыгарга җыена.
+  proxyConnectivityFailed:
+    title: Прокси тоташуы
+    body: Прокси тоташуын тикшерү уңышсыз булды. Прокси ирешеп булмаска мөмкин.
   appHidden:
     title: Кушымта яшерелде
     body: Clash Verge фон режимында эшли.

@@ -23,6 +23,9 @@ notifications:
   appQuit:
     title: A punto de salir
     body: Clash Verge está a punto de salir.
+  proxyConnectivityFailed:
+    title: Conectividad del proxy
+    body: La verificación de conectividad del proxy falló. El proxy puede ser inalcanzable.
   appHidden:
     title: Aplicación oculta
     body: Clash Verge se está ejecutando en segundo plano.

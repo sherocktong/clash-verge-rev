@@ -23,6 +23,9 @@ notifications:
   appQuit:
     title: 即将退出
     body: Clash Verge 即将退出。
+  proxyConnectivityFailed:
+    title: 代理连通性
+    body: 代理连通性检查失败，代理可能不可达。
   appHidden:
     title: 应用已隐藏
     body: Clash Verge 正在后台运行。

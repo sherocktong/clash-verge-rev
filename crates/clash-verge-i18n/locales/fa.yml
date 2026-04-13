@@ -23,6 +23,9 @@ notifications:
   appQuit:
     title: در آستانه خروج
     body: Clash Verge در آستانه خروج است.
+  proxyConnectivityFailed:
+    title: اتصال پروکسی
+    body: بررسی اتصال پروکسی ناموفق بود. پروکسی ممکن است در دسترس نباشد.
   appHidden:
     title: برنامه پنهان شد
     body: Clash Verge در پس‌زمینه در حال اجراست.

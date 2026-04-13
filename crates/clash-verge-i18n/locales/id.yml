@@ -23,6 +23,9 @@ notifications:
   appQuit:
     title: Akan Keluar
     body: Clash Verge akan keluar.
+  proxyConnectivityFailed:
+    title: Koneksi Proxy
+    body: Pemeriksaan koneksi proxy gagal. Proxy mungkin tidak dapat dijangkau.
   appHidden:
     title: Aplikasi Disembunyikan
     body: Clash Verge berjalan di latar belakang.

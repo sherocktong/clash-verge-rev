@@ -70,6 +70,7 @@ pub fn resolve_setup_async() {
             init_auto_lightweight_boot(),
             init_auto_backup(),
             init_silent_updater(),
+            init_proxy_connectivity_checker(),
         );
 
         Handle::refresh_clash();
@@ -154,6 +155,13 @@ async fn init_silent_updater() {
     });
 
     logging!(info, Type::Setup, "Silent updater initialized");
+}
+
+async fn init_proxy_connectivity_checker() {
+    use crate::core::ProxyConnectivityChecker;
+    logging!(info, Type::Setup, "Initializing proxy connectivity checker...");
+    ProxyConnectivityChecker::start();
+    logging!(info, Type::Setup, "Proxy connectivity checker initialized");
 }
 
 pub fn init_signal() {

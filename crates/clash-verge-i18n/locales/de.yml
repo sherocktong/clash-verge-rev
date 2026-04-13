@@ -23,6 +23,9 @@ notifications:
   appQuit:
     title: Beenden steht bevor
     body: Clash Verge wird gleich beendet.
+  proxyConnectivityFailed:
+    title: Proxy-Verbindung
+    body: Proxy-Verbindungsprüfung fehlgeschlagen. Der Proxy ist möglicherweise nicht erreichbar.
   appHidden:
     title: Anwendung ausgeblendet
     body: Clash Verge läuft im Hintergrund.

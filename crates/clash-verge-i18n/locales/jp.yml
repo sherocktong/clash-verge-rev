@@ -23,6 +23,9 @@ notifications:
   appQuit:
     title: 終了間近
     body: Clash Verge はまもなく終了します。
+  proxyConnectivityFailed:
+    title: プロキシ接続
+    body: プロキシ接続チェックに失敗しました。プロキシに到達できない可能性があります。
   appHidden:
     title: アプリが非表示
     body: Clash Verge はバックグラウンドで実行中です。

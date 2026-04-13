@@ -23,6 +23,9 @@ notifications:
   appQuit:
     title: Скорый выход
     body: Clash Verge скоро завершит работу.
+  proxyConnectivityFailed:
+    title: Подключение прокси
+    body: Проверка подключения прокси не удалась. Прокси может быть недоступен.
   appHidden:
     title: Приложение скрыто
     body: Clash Verge работает в фоновом режиме.

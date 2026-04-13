@@ -23,6 +23,9 @@ notifications:
   appQuit:
     title: 곧 종료
     body: Clash Verge가 곧 종료됩니다.
+  proxyConnectivityFailed:
+    title: 프록시 연결
+    body: 프록시 연결 확인에 실패했습니다. 프록시에 연결할 수 없습니다.
   appHidden:
     title: 앱이 숨겨짐
     body: Clash Verge가 백그라운드에서 실행 중입니다.

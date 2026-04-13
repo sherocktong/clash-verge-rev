@@ -5,6 +5,7 @@ pub mod hotkey;
 pub mod logger;
 pub mod manager;
 mod notification;
+pub mod proxy_connectivity;
 pub mod service;
 pub mod sysopt;
 pub mod timer;
@@ -13,4 +14,6 @@ pub mod updater;
 pub mod validate;
 pub mod win_uwp;
 
-pub use self::{manager::CoreManager, timer::Timer, updater::SilentUpdater};
+pub use self::{
+    manager::CoreManager, proxy_connectivity::ProxyConnectivityChecker, timer::Timer, updater::SilentUpdater,
+};
