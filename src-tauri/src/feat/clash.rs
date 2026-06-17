@@ -5,9 +5,23 @@ use crate::{
     process::AsyncHandler,
     utils,
 };
+use bytes::BytesMut;
 use clash_verge_logging::{Type, logging};
+use once_cell::sync::Lazy;
 use serde_yaml_ng::{Mapping, Value};
 use smartstring::alias::String;
+use std::sync::Arc;
+
+#[allow(clippy::expect_used)]
+static TLS_CONFIG: Lazy<Arc<rustls::ClientConfig>> = Lazy::new(|| {
+    let root_store = rustls::RootCertStore::from_iter(webpki_roots::TLS_SERVER_ROOTS.iter().cloned());
+    let config = rustls::ClientConfig::builder_with_provider(Arc::new(rustls::crypto::ring::default_provider()))
+        .with_safe_default_protocol_versions()
+        .expect("Failed to set TLS versions")
+        .with_root_certificates(root_store)
+        .with_no_client_auth();
+    Arc::new(config)
+});
 
 /// Restart the Clash core
 pub async fn restart_clash_core() {
@@ -127,6 +141,7 @@ pub async fn test_delay(url: String) -> anyhow::Result<u32> {
 
     tokio::time::timeout(Duration::from_secs(10), async {
         let start = Instant::now();
+        let mut buf = BytesMut::with_capacity(1024);
 
         if is_https {
             let stream = match proxy_port {
@@ -134,22 +149,15 @@ pub async fn test_delay(url: String) -> anyhow::Result<u32> {
                     let mut s = TcpStream::connect(format!("127.0.0.1:{pp}")).await?;
                     s.write_all(format!("CONNECT {host}:{port} HTTP/1.1\r\nHost: {host}:{port}\r\n\r\n").as_bytes())
                         .await?;
-                    let mut buf = [0u8; 1024];
-                    let n = s.read(&mut buf).await?;
-                    if !std::str::from_utf8(&buf[..n]).unwrap_or("").contains("200") {
+                    s.read_buf(&mut buf).await?;
+                    if !buf.windows(3).any(|w| w == b"200") {
                         return Err(anyhow::anyhow!("Proxy CONNECT failed"));
                     }
                     s
                 }
                 None => TcpStream::connect(format!("{host}:{port}")).await?,
             };
-            let root_store = rustls::RootCertStore::from_iter(webpki_roots::TLS_SERVER_ROOTS.iter().cloned());
-            let config =
-                rustls::ClientConfig::builder_with_provider(Arc::new(rustls::crypto::ring::default_provider()))
-                    .with_safe_default_protocol_versions()?
-                    .with_root_certificates(root_store)
-                    .with_no_client_auth();
-            let connector = tokio_rustls::TlsConnector::from(Arc::new(config));
+            let connector = tokio_rustls::TlsConnector::from(Arc::clone(&TLS_CONFIG));
             let server_name = rustls::pki_types::ServerName::try_from(host.as_str())
                 .map_err(|_| anyhow::anyhow!("Invalid DNS name: {host}"))?
                 .to_owned();
@@ -166,7 +174,6 @@ pub async fn test_delay(url: String) -> anyhow::Result<u32> {
                 ),
             };
             stream.write_all(req.as_bytes()).await?;
-            let mut buf = [0u8; 1024];
             let _ = stream.read(&mut buf).await?;
         }
 

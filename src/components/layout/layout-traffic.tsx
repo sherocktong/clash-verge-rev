@@ -3,6 +3,7 @@ import {
   ArrowUpwardRounded,
   MemoryRounded,
 } from '@mui/icons-material'
+import type { BoxProps, SvgIconProps, TypographyProps } from '@mui/material'
 import { Box, Typography } from '@mui/material'
 import { useEffect, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -40,6 +41,8 @@ export const LayoutTraffic = () => {
       trafficRef.current.appendData({
         up: traffic?.up || 0,
         down: traffic?.down || 0,
+        upTotal: traffic?.upTotal || 0,
+        downTotal: traffic?.downTotal || 0,
       })
     }
   }, [traffic])
@@ -52,30 +55,34 @@ export const LayoutTraffic = () => {
   const [down, downUnit] = parseTraffic(traffic?.down || 0)
   const [inuse, inuseUnit] = parseTraffic(memory?.inuse || 0)
 
-  const boxStyle: any = {
-    display: 'flex',
-    alignItems: 'center',
-    whiteSpace: 'nowrap',
+  const boxStyle: Pick<BoxProps, 'sx'> = {
+    sx: {
+      display: 'flex',
+      alignItems: 'center',
+      whiteSpace: 'nowrap',
+    },
   }
-  const iconStyle: any = {
+  const iconStyle: Pick<SvgIconProps, 'sx'> = {
     sx: { mr: '8px', fontSize: 16 },
   }
-  const valStyle: any = {
+  const valStyle: Pick<TypographyProps, 'component' | 'sx'> = {
     component: 'span',
-    textAlign: 'center',
-    sx: { flex: '1 1 56px', userSelect: 'none' },
+    sx: { flex: '1 1 56px', userSelect: 'none', textAlign: 'center' },
   }
-  const unitStyle: any = {
+  const unitStyle: Pick<TypographyProps, 'component' | 'color' | 'sx'> = {
     component: 'span',
     color: 'grey.500',
-    fontSize: '12px',
-    textAlign: 'right',
-    sx: { flex: '0 1 27px', userSelect: 'none' },
+    sx: {
+      flex: '0 1 27px',
+      userSelect: 'none',
+      fontSize: '12px',
+      textAlign: 'right',
+    },
   }
 
   return (
     <LightweightTrafficErrorBoundary>
-      <Box position="relative">
+      <Box sx={{ position: 'relative' }}>
         {trafficGraph && pageVisible && (
           <div
             style={{ width: '100%', height: 60, marginBottom: 6 }}
@@ -85,7 +92,7 @@ export const LayoutTraffic = () => {
           </div>
         )}
 
-        <Box display="flex" flexDirection="column" gap={0.75}>
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.75 }}>
           <Box
             title={`${t('home.components.traffic.metrics.uploadSpeed')}`}
             {...boxStyle}
@@ -127,6 +134,7 @@ export const LayoutTraffic = () => {
               title={`${t('home.components.traffic.metrics.memoryUsage')} `}
               {...boxStyle}
               sx={{
+                ...boxStyle.sx,
                 cursor: 'auto',
                 // opacity: memory?.is_fresh ? 1 : 0.6,
               }}

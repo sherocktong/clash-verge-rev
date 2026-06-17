@@ -10,6 +10,7 @@ mod feat;
 mod module;
 mod process;
 pub mod utils;
+
 use crate::constants::files;
 use crate::{
     core::handle,
@@ -140,8 +141,6 @@ mod app_init {
             cmd::open_logs_dir,
             cmd::open_web_url,
             cmd::open_core_dir,
-            cmd::open_app_log,
-            cmd::open_core_log,
             cmd::get_portable_flag,
             cmd::get_network_interfaces,
             cmd::get_system_hostname,
@@ -225,6 +224,8 @@ pub fn run() {
 
     #[cfg(target_os = "linux")]
     utils::linux::workarounds::apply_nvidia_dmabuf_renderer_workaround();
+    #[cfg(target_os = "linux")]
+    utils::linux::workarounds::apply_wayland_webkit_fix();
 
     let _ = utils::dirs::init_portable_flag();
 
@@ -395,21 +396,24 @@ pub fn run() {
             });
         }
         tauri::RunEvent::Exit => AsyncHandler::block_on(async {
+            // Windows session ending currently reaches Tao as WM_ENDSESSION and
+            // destroys the loop without a preventable ExitRequested event.
             if !handle::Handle::global().is_exiting() {
                 feat::quit().await;
             }
+            logging!(info, Type::System, "Application exited");
         }),
+        #[allow(unused_variables)]
         tauri::RunEvent::ExitRequested { api, code, .. } => {
-            if core::handle::Handle::global().is_exiting() {
-                return;
-            }
-
-            AsyncHandler::block_on(async {
-                let _ = handle::Handle::mihomo().await.clear_all_ws_connections().await;
-            });
-
-            if code.is_none() {
+            if module::lightweight::is_in_lightweight_mode() && !handle::Handle::global().is_exiting() {
                 api.prevent_exit();
+            } else if code.is_none() {
+                api.prevent_exit();
+                if !handle::Handle::global().is_exiting() {
+                    AsyncHandler::block_on(async {
+                        feat::quit().await;
+                    });
+                }
             }
         }
         tauri::RunEvent::WindowEvent { label, event, .. } if label == "main" => match event {

@@ -50,6 +50,8 @@ pub fn resolve_setup_async() {
     AsyncHandler::spawn(|| async {
         logging!(info, Type::ClashVergeRev, "Version: {}", env!("CARGO_PKG_VERSION"));
 
+        #[cfg(target_os = "macos")]
+        resolve_dock_show().await;
         init_startup_script().await;
         init_verge_config().await;
         Config::verify_config_initialization().await;
@@ -184,11 +186,8 @@ pub(super) async fn init_verge_config() {
 
 pub(super) async fn init_service_manager() {
     clash_verge_service_ipc::set_config(Some(ServiceManager::config())).await;
-    if !is_service_ipc_path_exists() {
-        return;
-    }
-    if SERVICE_MANAGER.lock().await.init().await.is_ok() {
-        logging_error!(Type::Setup, SERVICE_MANAGER.lock().await.refresh().await);
+    if is_service_ipc_path_exists() && SERVICE_MANAGER.init().await.is_ok() {
+        logging_error!(Type::Setup, SERVICE_MANAGER.refresh().await);
     }
 }
 
@@ -210,12 +209,15 @@ pub(super) async fn refresh_tray_menu() {
 
 pub(super) async fn init_window() {
     let is_silent_start = Config::verge().await.data_arc().enable_silent_start.unwrap_or(false);
-    #[cfg(target_os = "macos")]
+    WindowManager::create_window(!is_silent_start).await;
+}
+
+#[cfg(target_os = "macos")]
+pub(super) async fn resolve_dock_show() {
+    let is_silent_start = Config::verge().await.data_arc().enable_silent_start.unwrap_or(false);
     if is_silent_start {
-        use crate::core::handle::Handle;
         Handle::global().set_activation_policy_accessory();
     }
-    WindowManager::create_window(!is_silent_start).await;
 }
 
 pub fn resolve_done() {

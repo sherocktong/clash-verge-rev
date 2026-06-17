@@ -14,11 +14,11 @@ type LogType = ILogItem['type']
 
 const DEFAULT_LOG_TYPES: LogType[] = ['debug', 'info', 'warning', 'error']
 const LOG_LEVEL_FILTERS: Record<LogLevel, LogType[]> = {
-  debug: DEFAULT_LOG_TYPES,
-  info: ['info', 'warning', 'error'],
-  warning: ['warning', 'error'],
-  error: ['error'],
-  silent: [],
+  DEBUG: DEFAULT_LOG_TYPES,
+  INFO: ['info', 'warning', 'error'],
+  WARNING: ['warning', 'error'],
+  ERROR: ['error'],
+  SILENT: [],
 }
 
 const clampLogs = (logs: ILogItem[]): ILogItem[] =>
@@ -36,7 +36,16 @@ const filterLogsByLevel = (
 const appendLogs = (
   current: ILogItem[] | undefined,
   incoming: ILogItem[],
-): ILogItem[] => clampLogs([...(current ?? []), ...incoming])
+): ILogItem[] => {
+  const base = current ?? []
+  const total = base.length + incoming.length
+  if (total <= MAX_LOG_NUM) return base.concat(incoming)
+  const dropFromBase = total - MAX_LOG_NUM
+  if (dropFromBase >= base.length) {
+    return incoming.slice(incoming.length - MAX_LOG_NUM)
+  }
+  return base.slice(dropFromBase).concat(incoming)
+}
 
 export const useLogData = () => {
   const queryClient = useQueryClient()
@@ -44,6 +53,7 @@ export const useLogData = () => {
   const enableLog = clashLog.enable
   const logLevel = clashLog.logLevel
   const allowedTypes = LOG_LEVEL_FILTERS[logLevel] ?? DEFAULT_LOG_TYPES
+  const hasLoadedInitialLogsRef = useRef(false)
 
   const { response, refresh, subscriptionCacheKey } = useMihomoWsSubscription<
     ILogItem[]
@@ -55,6 +65,7 @@ export const useLogData = () => {
     setupHandlers: ({ next, scheduleReconnect, isMounted }) => {
       let flushTimer: ReturnType<typeof setTimeout> | null = null
       const buffer: ILogItem[] = []
+      let flushTimeStr: string | null = null
 
       const clearFlushTimer = () => {
         if (flushTimer) {
@@ -69,6 +80,7 @@ export const useLogData = () => {
           return
         }
         const pendingLogs = buffer.splice(0, buffer.length)
+        flushTimeStr = null
         next(null, (current) => appendLogs(current, pendingLogs))
         flushTimer = null
       }
@@ -89,7 +101,10 @@ export const useLogData = () => {
             ) {
               return
             }
-            parsed.time = dayjs().format('MM-DD HH:mm:ss')
+            if (flushTimeStr === null) {
+              flushTimeStr = dayjs().format('MM-DD HH:mm:ss')
+            }
+            parsed.time = flushTimeStr
             buffer.push(parsed)
             if (buffer.length > MAX_LOG_NUM) {
               buffer.splice(0, buffer.length - MAX_LOG_NUM)
@@ -102,7 +117,11 @@ export const useLogData = () => {
           }
         },
         async onConnected() {
+          if (hasLoadedInitialLogsRef.current) {
+            return
+          }
           const logs = await getClashLogs()
+          hasLoadedInitialLogsRef.current = true
           if (isMounted()) {
             next(null, (current) => {
               if (!current || current.length === 0) {
@@ -117,7 +136,7 @@ export const useLogData = () => {
     },
   })
 
-  const previousLogLevelRef = useRef<string | undefined>(undefined)
+  const previousLogLevelRef = useRef<LogLevel | undefined>(logLevel)
 
   useEffect(() => {
     if (!logLevel) {
@@ -130,6 +149,7 @@ export const useLogData = () => {
     }
 
     previousLogLevelRef.current = logLevel
+    hasLoadedInitialLogsRef.current = false
     refresh()
   }, [logLevel, refresh])
 
@@ -139,6 +159,7 @@ export const useLogData = () => {
         queryClient.setQueryData<ILogItem[]>([subscriptionCacheKey], [])
       }
     } else {
+      hasLoadedInitialLogsRef.current = false
       refresh()
     }
   }
