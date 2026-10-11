@@ -40,6 +40,8 @@ import { ConnectionTable } from '@/components/connection/connection-table'
 import { useConnectionData } from '@/hooks/use-connection-data'
 import { useConnectionSetting } from '@/hooks/use-connection-setting'
 import { useTrafficData } from '@/hooks/use-traffic-data'
+import { useVisibility } from '@/hooks/use-visibility'
+import { mutate } from '@/services/mutate'
 import parseTraffic from '@/utils/parse-traffic'
 
 type OrderFunc = (list: IConnectionsItem[]) => IConnectionsItem[]
@@ -80,6 +82,7 @@ const orderFunctionMap = ORDER_OPTIONS.reduce<Record<OrderKey, OrderFunc>>(
 const EMPTY_CONNECTIONS: IConnectionsItem[] = []
 const ConnectionsPage = () => {
   const { t } = useTranslation()
+  const pageVisible = useVisibility()
   const [match, setMatch] = useState<(input: string) => boolean>(
     () => () => true,
   )
@@ -92,10 +95,10 @@ const ConnectionsPage = () => {
   const {
     response: { data: connections },
     clearClosedConnections,
-  } = useConnectionData()
+  } = useConnectionData({ enabled: pageVisible })
   const {
     response: { data: traffic },
-  } = useTrafficData()
+  } = useTrafficData({ enabled: pageVisible })
 
   const [setting, setSetting] = useConnectionSetting()
 
@@ -150,7 +153,12 @@ const ConnectionsPage = () => {
     [connectionsType, filterConn],
   )
 
-  const onCloseAll = useLockFn(closeAllConnections)
+  const onCloseAll = useLockFn(() =>
+    mutate(() => closeAllConnections(), {
+      id: 'close-all-connections',
+      errorNotice: false,
+    }),
+  )
 
   const handleSearch = useCallback(
     (match: (content: string) => boolean, state: SearchState) => {

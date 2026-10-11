@@ -39,17 +39,6 @@ interface StatCardProps {
   onClick?: () => void
 }
 
-// 全局变量类型定义
-declare global {
-  interface Window {
-    animationFrameId?: number
-    lastTrafficData?: {
-      up: number
-      down: number
-    }
-  }
-}
-
 // 统计卡片组件 - 使用memo优化
 const CompactStatCard = memo(
   ({ icon, title, value, unit, color, onClick }: StatCardProps) => {
@@ -147,18 +136,19 @@ export const EnhancedTrafficStats = () => {
 
   // 是否显示流量图表
   const trafficGraph = verge?.traffic_graph ?? true
+  const displayMemory = verge?.enable_memory_usage ?? true
 
   const {
     response: { data: traffic },
-  } = useTrafficData({ enabled: trafficGraph && pageVisible })
+  } = useTrafficData({ enabled: pageVisible })
 
   const {
     response: { data: memory },
-  } = useMemoryData()
+  } = useMemoryData({ enabled: displayMemory && pageVisible })
 
   const {
     response: { data: connectionSummary },
-  } = useConnectionSummaryData()
+  } = useConnectionSummaryData({ enabled: pageVisible })
 
   // Canvas组件现在直接从全局Hook获取数据，无需手动添加数据点
 
@@ -211,8 +201,8 @@ export const EnhancedTrafficStats = () => {
   }, [trafficGraph, pageVisible, theme.palette.divider])
 
   // 使用useMemo计算统计卡片配置
-  const statCards = useMemo(
-    () => [
+  const statCards = useMemo(() => {
+    const cards: StatCardProps[] = [
       {
         icon: <ArrowUpwardRounded fontSize="small" />,
         title: t('home.components.traffic.metrics.uploadSpeed'),
@@ -248,17 +238,20 @@ export const EnhancedTrafficStats = () => {
         unit: parsedData.downloadTotalUnit,
         color: 'primary' as const,
       },
-      {
+    ]
+
+    if (displayMemory) {
+      cards.push({
         icon: <MemoryRounded fontSize="small" />,
         title: t('home.components.traffic.metrics.memoryUsage'),
         value: parsedData.inuse,
         unit: parsedData.inuseUnit,
         color: 'error' as const,
-        onClick: undefined,
-      },
-    ],
-    [t, parsedData],
-  )
+      })
+    }
+
+    return cards
+  }, [t, parsedData, displayMemory])
 
   return (
     <TrafficErrorBoundary
@@ -276,7 +269,7 @@ export const EnhancedTrafficStats = () => {
         {/* 统计卡片区域 */}
         {statCards.map((card) => (
           <Grid key={card.title} size={4}>
-            <CompactStatCard {...(card as StatCardProps)} />
+            <CompactStatCard {...card} />
           </Grid>
         ))}
       </Grid>
