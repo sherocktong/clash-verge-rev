@@ -172,9 +172,7 @@ impl ConfigManager {
             dir.join("verge.yaml")
         } else if portable {
             let exe_path = std::env::current_exe()?;
-            let exe_dir = exe_path
-                .parent()
-                .context("Failed to get executable directory")?;
+            let exe_dir = exe_path.parent().context("Failed to get executable directory")?;
             exe_dir.join(".config").join(APP_ID).join("verge.yaml")
         } else {
             dirs::data_dir()
@@ -209,19 +207,11 @@ impl ConfigManager {
             return Ok(VergeConfig::template());
         }
 
-        let content = std::fs::read_to_string(&self.config_path).with_context(|| {
-            format!(
-                "Failed to read config file: {}",
-                self.config_path.display()
-            )
-        })?;
+        let content = std::fs::read_to_string(&self.config_path)
+            .with_context(|| format!("Failed to read config file: {}", self.config_path.display()))?;
 
-        let config: VergeConfig = serde_yaml_ng::from_str(&content).with_context(|| {
-            format!(
-                "Failed to parse config file: {}",
-                self.config_path.display()
-            )
-        })?;
+        let config: VergeConfig = serde_yaml_ng::from_str(&content)
+            .with_context(|| format!("Failed to parse config file: {}", self.config_path.display()))?;
 
         Ok(config)
     }
@@ -232,12 +222,7 @@ impl ConfigManager {
 
         let content = serde_yaml_ng::to_string(config)?;
         std::fs::write(&self.config_path, format!("# Clash Verge Config\n{}", content))
-            .with_context(|| {
-                format!(
-                    "Failed to write config file: {}",
-                    self.config_path.display()
-                )
-            })?;
+            .with_context(|| format!("Failed to write config file: {}", self.config_path.display()))?;
 
         Ok(())
     }
@@ -250,19 +235,11 @@ impl ConfigManager {
             return Ok(ClashConfig::default());
         }
 
-        let content = std::fs::read_to_string(&clash_path).with_context(|| {
-            format!(
-                "Failed to read clash config file: {}",
-                clash_path.display()
-            )
-        })?;
+        let content = std::fs::read_to_string(&clash_path)
+            .with_context(|| format!("Failed to read clash config file: {}", clash_path.display()))?;
 
-        let config: ClashConfig = serde_yaml_ng::from_str(&content).with_context(|| {
-            format!(
-                "Failed to parse clash config file: {}",
-                clash_path.display()
-            )
-        })?;
+        let config: ClashConfig = serde_yaml_ng::from_str(&content)
+            .with_context(|| format!("Failed to parse clash config file: {}", clash_path.display()))?;
 
         Ok(config)
     }
@@ -308,10 +285,7 @@ impl SingletonClient {
 
         let result: serde_json::Value = response.json().await?;
         if !result.get("ok").and_then(|v| v.as_bool()).unwrap_or(false) {
-            let error = result
-                .get("error")
-                .and_then(|v| v.as_str())
-                .unwrap_or("Unknown error");
+            let error = result.get("error").and_then(|v| v.as_str()).unwrap_or("Unknown error");
             anyhow::bail!("Failed to enable TUN: {}", error);
         }
 
@@ -335,10 +309,7 @@ impl SingletonClient {
 
         let result: serde_json::Value = response.json().await?;
         if !result.get("ok").and_then(|v| v.as_bool()).unwrap_or(false) {
-            let error = result
-                .get("error")
-                .and_then(|v| v.as_str())
-                .unwrap_or("Unknown error");
+            let error = result.get("error").and_then(|v| v.as_str()).unwrap_or("Unknown error");
             anyhow::bail!("Failed to disable TUN: {}", error);
         }
 
@@ -362,17 +333,11 @@ impl SingletonClient {
 
         let result: serde_json::Value = response.json().await?;
         if !result.get("ok").and_then(|v| v.as_bool()).unwrap_or(false) {
-            let error = result
-                .get("error")
-                .and_then(|v| v.as_str())
-                .unwrap_or("Unknown error");
+            let error = result.get("error").and_then(|v| v.as_str()).unwrap_or("Unknown error");
             anyhow::bail!("Failed to toggle TUN: {}", error);
         }
 
-        Ok(result
-            .get("enabled")
-            .and_then(|v| v.as_bool())
-            .unwrap_or(false))
+        Ok(result.get("enabled").and_then(|v| v.as_bool()).unwrap_or(false))
     }
 
     /// Enable system proxy via the app
@@ -392,10 +357,7 @@ impl SingletonClient {
 
         let result: serde_json::Value = response.json().await?;
         if !result.get("ok").and_then(|v| v.as_bool()).unwrap_or(false) {
-            let error = result
-                .get("error")
-                .and_then(|v| v.as_str())
-                .unwrap_or("Unknown error");
+            let error = result.get("error").and_then(|v| v.as_str()).unwrap_or("Unknown error");
             anyhow::bail!("Failed to enable system proxy: {}", error);
         }
 
@@ -419,10 +381,7 @@ impl SingletonClient {
 
         let result: serde_json::Value = response.json().await?;
         if !result.get("ok").and_then(|v| v.as_bool()).unwrap_or(false) {
-            let error = result
-                .get("error")
-                .and_then(|v| v.as_str())
-                .unwrap_or("Unknown error");
+            let error = result.get("error").and_then(|v| v.as_str()).unwrap_or("Unknown error");
             anyhow::bail!("Failed to disable system proxy: {}", error);
         }
 
@@ -446,17 +405,11 @@ impl SingletonClient {
 
         let result: serde_json::Value = response.json().await?;
         if !result.get("ok").and_then(|v| v.as_bool()).unwrap_or(false) {
-            let error = result
-                .get("error")
-                .and_then(|v| v.as_str())
-                .unwrap_or("Unknown error");
+            let error = result.get("error").and_then(|v| v.as_str()).unwrap_or("Unknown error");
             anyhow::bail!("Failed to toggle system proxy: {}", error);
         }
 
-        Ok(result
-            .get("enabled")
-            .and_then(|v| v.as_bool())
-            .unwrap_or(false))
+        Ok(result.get("enabled").and_then(|v| v.as_bool()).unwrap_or(false))
     }
 
     /// Get current status from the app
@@ -605,11 +558,7 @@ impl SysProxyManager {
 }
 
 /// Print current status
-fn print_status(
-    config: &VergeConfig,
-    app_status: Option<&StatusResponse>,
-    controller: &str,
-) {
+fn print_status(config: &VergeConfig, app_status: Option<&StatusResponse>, controller: &str) {
     println!("{}", "╔══════════════════════════════════════════╗".bright_blue());
     println!("{}", "║        Clash Verge Status                ║".bright_blue());
     println!("{}", "╚══════════════════════════════════════════╝".bright_blue());
@@ -678,10 +627,9 @@ fn print_status(
 
 /// Get current system proxy settings
 fn get_current_system_proxy() -> Result<(sysproxy::Sysproxy, sysproxy::Autoproxy)> {
-    let sys = sysproxy::Sysproxy::get_system_proxy()
-        .map_err(|e| anyhow::anyhow!("Failed to get system proxy: {}", e))?;
-    let auto = sysproxy::Autoproxy::get_auto_proxy()
-        .map_err(|e| anyhow::anyhow!("Failed to get auto proxy: {}", e))?;
+    let sys =
+        sysproxy::Sysproxy::get_system_proxy().map_err(|e| anyhow::anyhow!("Failed to get system proxy: {}", e))?;
+    let auto = sysproxy::Autoproxy::get_auto_proxy().map_err(|e| anyhow::anyhow!("Failed to get auto proxy: {}", e))?;
     Ok((sys, auto))
 }
 
@@ -727,10 +675,7 @@ async fn main() -> Result<()> {
         Commands::EnableTun => {
             // Check if app is running
             if !singleton.is_running().await {
-                println!(
-                    "{}",
-                    "! Clash Verge app is not running. Cannot enable TUN.".yellow()
-                );
+                println!("{}", "! Clash Verge app is not running. Cannot enable TUN.".yellow());
                 return Ok(());
             }
 
@@ -747,10 +692,7 @@ async fn main() -> Result<()> {
         Commands::DisableTun => {
             // Check if app is running
             if !singleton.is_running().await {
-                println!(
-                    "{}",
-                    "! Clash Verge app is not running. Cannot disable TUN.".yellow()
-                );
+                println!("{}", "! Clash Verge app is not running. Cannot disable TUN.".yellow());
                 return Ok(());
             }
 
@@ -812,10 +754,7 @@ async fn main() -> Result<()> {
         Commands::ToggleTun => {
             // Check if app is running
             if !singleton.is_running().await {
-                println!(
-                    "{}",
-                    "! Clash Verge app is not running. Cannot toggle TUN.".yellow()
-                );
+                println!("{}", "! Clash Verge app is not running. Cannot toggle TUN.".yellow());
                 return Ok(());
             }
 
