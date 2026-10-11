@@ -6,6 +6,7 @@ pub mod config;
 mod constants;
 mod core;
 mod enhance;
+mod extensions;
 mod feat;
 mod module;
 mod process;

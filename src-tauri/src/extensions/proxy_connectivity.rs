@@ -1,11 +1,9 @@
-use crate::{
-    config::Config,
-    core::handle,
-    process::AsyncHandler,
-    utils::notification::{NotificationEvent, notify_event},
-};
+//! Background proxy connectivity checker with native notification on failure.
+
+use crate::{config::Config, core::handle, process::AsyncHandler};
 use clash_verge_logging::{Type, logging};
 use std::sync::atomic::{AtomicBool, Ordering};
+use tauri_plugin_notification::NotificationExt as _;
 use tokio::time::{Duration, sleep};
 
 /// Interval between connectivity checks (10 minutes)
@@ -92,12 +90,20 @@ impl ProxyConnectivityChecker {
             }
             Ok(Err(e)) => {
                 logging!(warn, Type::System, "Proxy connectivity check failed: {e}");
-                notify_event(NotificationEvent::ProxyConnectivityFailed).await;
+                Self::notify_connectivity_failed();
             }
             Err(_) => {
                 logging!(warn, Type::System, "Proxy connectivity check timed out");
-                notify_event(NotificationEvent::ProxyConnectivityFailed).await;
+                Self::notify_connectivity_failed();
             }
         }
+    }
+
+    /// Show a native notification when the connectivity check fails.
+    fn notify_connectivity_failed() {
+        let app_handle = handle::Handle::app_handle();
+        let title = clash_verge_i18n::t!("notifications.proxyConnectivityFailed.title");
+        let body = clash_verge_i18n::t!("notifications.proxyConnectivityFailed.body");
+        app_handle.notification().builder().title(title).body(body).show().ok();
     }
 }

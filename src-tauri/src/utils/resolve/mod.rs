@@ -64,7 +64,7 @@ pub fn resolve_setup_async() {
             init_system_proxy_guard().await;
         });
 
-        init_proxy_connectivity_checker();
+        crate::extensions::init();
 
         let _ = futures::join!(
             core_init,
@@ -158,13 +158,6 @@ async fn init_silent_updater() {
     });
 
     logging!(info, Type::Setup, "Silent updater initialized");
-}
-
-fn init_proxy_connectivity_checker() {
-    use crate::core::ProxyConnectivityChecker;
-    logging!(info, Type::Setup, "Initializing proxy connectivity checker...");
-    ProxyConnectivityChecker::start();
-    logging!(info, Type::Setup, "Proxy connectivity checker initialized");
 }
 
 pub fn init_signal() {
