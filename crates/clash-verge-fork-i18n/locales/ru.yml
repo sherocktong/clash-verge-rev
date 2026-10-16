@@ -1,0 +1,6 @@
+_version: 1
+clash_verge_i18n:
+  notifications:
+    proxyConnectivityFailed:
+      title: "Подключение прокси"
+      body: "Проверка подключения прокси не удалась. Прокси может быть недоступен."

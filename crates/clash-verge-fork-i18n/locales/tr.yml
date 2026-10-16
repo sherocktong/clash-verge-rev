@@ -1,0 +1,6 @@
+_version: 1
+clash_verge_i18n:
+  notifications:
+    proxyConnectivityFailed:
+      title: "Proxy Bağlantısı"
+      body: "Proxy bağlantı kontrolü başarısız oldu. Proxy erişilemez olabilir."

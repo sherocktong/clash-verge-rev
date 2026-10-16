@@ -1,0 +1,12 @@
+[package]
+name = "clash-verge-fork-i18n"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+clash-verge-i18n = { workspace = true }
+rust-i18n = "4.2.4"
+lazy_static = "1"
+
+[lints]
+workspace = true

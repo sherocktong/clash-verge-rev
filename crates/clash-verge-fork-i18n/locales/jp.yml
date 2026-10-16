@@ -1,0 +1,6 @@
+_version: 1
+clash_verge_i18n:
+  notifications:
+    proxyConnectivityFailed:
+      title: "プロキシ接続"
+      body: "プロキシ接続チェックに失敗しました。プロキシに到達できない可能性があります。"

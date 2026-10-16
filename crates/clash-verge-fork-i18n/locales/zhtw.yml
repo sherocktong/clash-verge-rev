@@ -1,0 +1,6 @@
+_version: 1
+clash_verge_i18n:
+  notifications:
+    proxyConnectivityFailed:
+      title: "代理連通性"
+      body: "代理連通性檢查失敗，代理可能不可達。"

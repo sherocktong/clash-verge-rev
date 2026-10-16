@@ -29,9 +29,6 @@ notifications:
   appQuit:
     title: Çıkış Yapılmak Üzere
     body: Clash Verge kapanmak üzere.
-  proxyConnectivityFailed:
-    title: Proxy Bağlantısı
-    body: Proxy bağlantı kontrolü başarısız oldu. Proxy erişilemez olabilir.
   updateReady:
     title: Clash Verge Güncellemesi
     body: Yeni bir sürüm (v{version}) indirildi ve kurulmaya hazır.

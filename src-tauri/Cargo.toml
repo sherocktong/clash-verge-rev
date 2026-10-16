@@ -38,6 +38,8 @@ clash-verge-logging = { workspace = true }
 clash-verge-signal = { workspace = true }
 clash-verge-i18n = { workspace = true }
 clash-verge-limiter = { workspace = true }
+# fork wrapper: fork-owned i18n overlay; must survive upstream syncs
+clash-verge-fork-i18n = { workspace = true }
 tauri-plugin-clash-verge-sysinfo = { workspace = true }
 tauri-plugin-clipboard-manager = { workspace = true }
 tauri = { workspace = true, features = [

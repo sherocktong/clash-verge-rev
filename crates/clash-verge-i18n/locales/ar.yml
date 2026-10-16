@@ -29,9 +29,6 @@ notifications:
   appQuit:
     title: على وشك الخروج
     body: Clash Verge على وشك الخروج.
-  proxyConnectivityFailed:
-    title: اتصال الوكيل
-    body: فشل التحقق من اتصال الوكيل. قد يكون الوكيل غير متاح.
   updateReady:
     title: Clash Verge Update
     body: A new version (v{version}) has been downloaded and is ready to install.

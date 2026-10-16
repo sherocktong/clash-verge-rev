@@ -29,9 +29,6 @@ notifications:
   appQuit:
     title: Чыгар алдыннан
     body: Clash Verge чыгарга җыена.
-  proxyConnectivityFailed:
-    title: Прокси тоташуы
-    body: Прокси тоташуын тикшерү уңышсыз булды. Прокси ирешеп булмаска мөмкин.
   updateReady:
     title: Clash Verge Update
     body: A new version (v{version}) has been downloaded and is ready to install.

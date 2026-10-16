@@ -1,0 +1,6 @@
+_version: 1
+clash_verge_i18n:
+  notifications:
+    proxyConnectivityFailed:
+      title: "Koneksi Proxy"
+      body: "Pemeriksaan koneksi proxy gagal. Proxy mungkin tidak dapat dijangkau."

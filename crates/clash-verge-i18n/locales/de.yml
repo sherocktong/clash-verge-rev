@@ -29,9 +29,6 @@ notifications:
   appQuit:
     title: Beenden steht bevor
     body: Clash Verge wird gleich beendet.
-  proxyConnectivityFailed:
-    title: Proxy-Verbindung
-    body: Proxy-Verbindungsprüfung fehlgeschlagen. Der Proxy ist möglicherweise nicht erreichbar.
   updateReady:
     title: Clash-Verge-Update
     body: Eine neue Version (v{version}) wurde heruntergeladen und kann installiert werden.

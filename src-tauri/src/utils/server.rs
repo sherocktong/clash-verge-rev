@@ -284,8 +284,6 @@ fn start_embedded_server(listener: tokio::net::TcpListener, token: String) {
             release_dev_quit_latch(&DEV_QUIT_REQUESTED, crate::feat::quit().await);
         });
     }));
-    // Fork extensions: additional command routes backing `clash-verge-cli`
-    let commands = commands.or(crate::extensions::cli_routes());
     AsyncHandler::spawn(move || async move {
         warp::serve(commands)
             .incoming(listener)

@@ -1,0 +1,6 @@
+_version: 1
+clash_verge_i18n:
+  notifications:
+    proxyConnectivityFailed:
+      title: "اتصال پروکسی"
+      body: "بررسی اتصال پروکسی ناموفق بود. پروکسی ممکن است در دسترس نباشد."

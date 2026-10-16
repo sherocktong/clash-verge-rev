@@ -1155,6 +1155,7 @@ dependencies = [
  "bytes",
  "chrono",
  "clash-verge-draft",
+ "clash-verge-fork-i18n",
  "clash-verge-i18n",
  "clash-verge-limiter",
  "clash-verge-logging",
@@ -1253,6 +1254,15 @@ dependencies = [
  "criterion",
  "parking_lot",
  "tokio",
+]
+
+[[package]]
+name = "clash-verge-fork-i18n"
+version = "0.1.0"
+dependencies = [
+ "clash-verge-i18n",
+ "lazy_static",
+ "rust-i18n",
 ]
 
 [[package]]

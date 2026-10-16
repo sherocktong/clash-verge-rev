@@ -1,0 +1,6 @@
+_version: 1
+clash_verge_i18n:
+  notifications:
+    proxyConnectivityFailed:
+      title: "Conectividad del proxy"
+      body: "La verificación de conectividad del proxy falló. El proxy puede ser inalcanzable."

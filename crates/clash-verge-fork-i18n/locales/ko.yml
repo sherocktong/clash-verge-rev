@@ -1,0 +1,6 @@
+_version: 1
+clash_verge_i18n:
+  notifications:
+    proxyConnectivityFailed:
+      title: "프록시 연결"
+      body: "프록시 연결 확인에 실패했습니다. 프록시에 연결할 수 없습니다."

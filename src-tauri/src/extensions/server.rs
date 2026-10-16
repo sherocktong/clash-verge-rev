@@ -1,17 +1,59 @@
-//! Additional embedded-server command routes backing the `clash-verge-cli`
-//! tool (TUN / system proxy control, config reload, and status reporting).
+//! Fork-owned CLI control server.
+//!
+//! Serves the `clash-verge-cli` command routes on the fixed loopback port
+//! 127.0.0.1:33331 instead of merging them into the upstream embedded
+//! server, so `utils/server.rs` stays byte-identical to upstream across
+//! syncs. The CLI assumes that fixed port, which only the upstream server
+//! used before it moved to an ephemeral port; this fork-owned listener
+//! restores the contract.
+
+use std::net::{IpAddr, Ipv4Addr};
+use std::future::pending;
+
+use anyhow::{Context as _, Result};
+use clash_verge_logging::{Type, logging};
+use tokio::net::TcpListener;
+use warp::Filter;
 
 use crate::{
     config::{Config, IVerge},
     feat,
     process::AsyncHandler,
 };
-use clash_verge_logging::{Type, logging};
-use warp::Filter;
 
-/// Warp filter with all CLI command routes, designed to be combined with the
-/// upstream filter chain via `.or(cli_routes())`.
-pub fn cli_routes() -> impl Filter<Extract = (impl warp::Reply,), Error = warp::Rejection> + Clone {
+const CLI_PORT: u16 = 33331;
+
+/// Start the fork control server and register fork i18n overlays.
+pub fn init() {
+    clash_verge_fork_i18n::register();
+
+    AsyncHandler::spawn(move || async move {
+        if let Err(err) = serve().await {
+            logging!(error, Type::Core, "CLI control server stopped: {err}");
+        }
+    });
+}
+
+async fn serve() -> Result<()> {
+    let listener = TcpListener::bind((IpAddr::from(Ipv4Addr::LOCALHOST), CLI_PORT))
+        .await
+        .context("failed to bind CLI control port")?;
+
+    logging!(
+        info,
+        Type::Core,
+        "CLI control server listening on 127.0.0.1:{CLI_PORT}"
+    );
+    warp::serve(cli_routes())
+        .incoming(listener)
+        .graceful(async { pending::<()>().await })
+        .run()
+        .await;
+    Ok(())
+}
+
+/// Warp filter with all CLI command routes.
+fn cli_routes() -> impl Filter<Extract = (impl warp::Reply,), Error = warp::Rejection> + Clone {
     // Reload verge config from file (called by CLI)
     let reload_verge = warp::path!("commands" / "reload" / "verge").and_then(|| async {
         logging!(info, Type::Window, "CLI requested verge config reload");

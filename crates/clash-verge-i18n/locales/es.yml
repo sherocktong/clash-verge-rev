@@ -29,9 +29,6 @@ notifications:
   appQuit:
     title: A punto de salir
     body: Clash Verge está a punto de salir.
-  proxyConnectivityFailed:
-    title: Conectividad del proxy
-    body: La verificación de conectividad del proxy falló. El proxy puede ser inalcanzable.
   updateReady:
     title: Clash Verge Update
     body: A new version (v{version}) has been downloaded and is ready to install.

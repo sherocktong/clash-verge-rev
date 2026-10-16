@@ -29,9 +29,6 @@ notifications:
   appQuit:
     title: 即將退出
     body: Clash Verge 即將退出。
-  proxyConnectivityFailed:
-    title: 代理連通性
-    body: 代理連通性檢查失敗，代理可能不可達。
   updateReady:
     title: Clash Verge 更新
     body: 新版本（v{version}）已下載完成，是否立即安裝？

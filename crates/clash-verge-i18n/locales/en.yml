@@ -29,9 +29,6 @@ notifications:
   appQuit:
     title: About to Exit
     body: Clash Verge is about to exit.
-  proxyConnectivityFailed:
-    title: Proxy Connectivity
-    body: Proxy connectivity check failed. The proxy may be unreachable.
   updateReady:
     title: Clash Verge Update
     body: A new version (v{version}) has been downloaded and is ready to install.

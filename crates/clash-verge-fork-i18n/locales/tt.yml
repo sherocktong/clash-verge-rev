@@ -1,0 +1,6 @@
+_version: 1
+clash_verge_i18n:
+  notifications:
+    proxyConnectivityFailed:
+      title: "Прокси тоташуы"
+      body: "Прокси тоташуын тикшерү уңышсыз булды. Прокси ирешеп булмаска мөмкин."

@@ -29,9 +29,6 @@ notifications:
   appQuit:
     title: Akan Keluar
     body: Clash Verge akan keluar.
-  proxyConnectivityFailed:
-    title: Koneksi Proxy
-    body: Pemeriksaan koneksi proxy gagal. Proxy mungkin tidak dapat dijangkau.
   updateReady:
     title: Clash Verge Update
     body: A new version (v{version}) has been downloaded and is ready to install.

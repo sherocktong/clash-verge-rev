@@ -1,0 +1,6 @@
+_version: 1
+clash_verge_i18n:
+  notifications:
+    proxyConnectivityFailed:
+      title: "Proxy Connectivity"
+      body: "Proxy connectivity check failed. The proxy may be unreachable."

@@ -29,9 +29,6 @@ notifications:
   appQuit:
     title: 곧 종료
     body: Clash Verge가 곧 종료됩니다.
-  proxyConnectivityFailed:
-    title: 프록시 연결
-    body: 프록시 연결 확인에 실패했습니다. 프록시에 연결할 수 없습니다.
   updateReady:
     title: Clash Verge Update
     body: A new version (v{version}) has been downloaded and is ready to install.

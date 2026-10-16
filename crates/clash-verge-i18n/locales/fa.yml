@@ -29,9 +29,6 @@ notifications:
   appQuit:
     title: در آستانه خروج
     body: Clash Verge در آستانه خروج است.
-  proxyConnectivityFailed:
-    title: اتصال پروکسی
-    body: بررسی اتصال پروکسی ناموفق بود. پروکسی ممکن است در دسترس نباشد.
   updateReady:
     title: Clash Verge Update
     body: A new version (v{version}) has been downloaded and is ready to install.
