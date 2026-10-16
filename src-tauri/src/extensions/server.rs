@@ -7,8 +7,8 @@
 //! used before it moved to an ephemeral port; this fork-owned listener
 //! restores the contract.
 
-use std::net::{IpAddr, Ipv4Addr};
 use std::future::pending;
+use std::net::{IpAddr, Ipv4Addr};
 
 use anyhow::{Context as _, Result};
 use clash_verge_logging::{Type, logging};
@@ -39,11 +39,7 @@ async fn serve() -> Result<()> {
         .await
         .context("failed to bind CLI control port")?;
 
-    logging!(
-        info,
-        Type::Core,
-        "CLI control server listening on 127.0.0.1:{CLI_PORT}"
-    );
+    logging!(info, Type::Core, "CLI control server listening on 127.0.0.1:{CLI_PORT}");
     warp::serve(cli_routes())
         .incoming(listener)
         .graceful(async { pending::<()>().await })
